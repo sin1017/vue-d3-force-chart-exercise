@@ -1,71 +1,34 @@
 <script setup lang="ts">
-  import * as d3 from "d3"
+import HomeView from "./views/HomeView.vue";
+const nodeList = [
+  { id: 5, name: "亮", color: "#7777a9" },
+  { id: 6, name: "丽", color: "#77A9A7" },
+  { id: 9, name: "组长", color: "#77A982" },
+  { id: 12, name: "湖南邵阳", color: "#7777a9" },
+];
+const lineData = [
+  {
+    id: 1,
+    source: 12,
+    target: 5,
+    relation: "籍贯",
+    value: 1.3,
+  },
+  {
+    id: 2,
+    source: 9,
+    target: 6,
+    relation: "舍友",
+    value: 1,
+  },
+];
 </script>
 
 <template>
-  
+  <HomeView
+    :data="{
+      nodeList: nodeList,
+      lineData: lineData,
+    }"
+  />
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
