@@ -25,11 +25,9 @@ const props = withDefaults(
   }>(),
   {}
 );
-const width = computed<number>(() => {
-  const widthValue = d3.select(".draw").style("width").split("px");
-  return Number(widthValue[0]);
-});
-const height = computed<number>(() => width.value * 0.5);
+const svg = ref();
+const width = computed(() => svg.value.attr("width"));
+const height = computed(() => svg.value.attr("height"));
 const title = ref();
 const nodesMap = ref();
 const nodesDataList = ref();
@@ -466,12 +464,8 @@ function ticked() {
  * @description 繪製圖表
  */
 function drawChart() {
-  const svg = d3
-    .select(".draw")
-    .append("svg")
-    .attr("width", width.value)
-    .attr("height", height.value);
-  const g = svg.append("g").attr("class", "container");
+  svg.value = d3.select("svg");
+  const g = svg.value.append("g").attr("class", "container");
   nodesMap.value = genNodesMap(props.data.nodeList);
   nodesDataList.value = values(nodesMap.value);
   linkMap.value = genLinkMap(props.data.lineData);
@@ -594,7 +588,7 @@ function drawChart() {
       true
     )
     .call(d3.drag().on("start", started).on("drag", dragged).on("end", ended));
-  svg.on(
+  svg.value.on(
     "click",
     function () {
       console.log("123");
@@ -646,7 +640,7 @@ onMounted(() => {
 <template>
   <div>
     <h3>{{ title }}</h3>
-    <svg class="draw"></svg>
+    <svg class="draw" width="960" height="500"></svg>
   </div>
 </template>
 <style>
