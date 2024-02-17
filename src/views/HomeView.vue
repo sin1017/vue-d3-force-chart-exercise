@@ -38,6 +38,7 @@ const forceSimulation = ref();
 const mark = ref();
 const links = ref();
 const lineText = ref();
+const g = ref();
 const gs = ref();
 const xScale = computed(() => {});
 const yScale = computed(() => {});
@@ -176,10 +177,8 @@ function toggleCircle(current: any, d: any) {
   let currentD = d;
   if (d.clickFlag) {
     removeSingle();
-    // document.getElementById("xxx").innerText = "";
   }
   d.clickFlag = true;
-  // document.getElementById("xxx").innerText = d.name;
   const data = [
     {
       population: 30,
@@ -202,17 +201,6 @@ function toggleCircle(current: any, d: any) {
       type: "addNewNode",
     },
   ];
-  //  const tooltip = d3
-  //     .select(".advancedTooltip")
-  //     .style("'position", "reactive")
-  //     .append("div")
-  //     .style("display", "none")
-  //     .style("position", "absolute")
-  //     .style("background-color", "blue")
-  //     .style("border", "solid")
-  //     .style("border-width", "2px")
-  //     .style("border-radius", "5px")
-  //     .style("padding", "5px");
 
   //-------------------------------------------------
   const sum = d3.sum(
@@ -464,8 +452,7 @@ function ticked() {
  * @description 繪製圖表
  */
 function drawChart() {
-  svg.value = d3.select("svg");
-  const g = svg.value.append("g").attr("class", "container");
+  g.value = svg.value.append("g").attr("class", "container");
   nodesMap.value = genNodesMap(props.data.nodeList);
   nodesDataList.value = values(nodesMap.value);
   linkMap.value = genLinkMap(props.data.lineData);
@@ -495,7 +482,7 @@ function drawChart() {
     .force("center")
     .x(width.value / 2)
     .y(height.value / 2);
-  mark.value = g
+  mark.value = g.value
     .append("g")
     .attr("class", "showLine")
     .append("mark")
@@ -512,7 +499,7 @@ function drawChart() {
     .append("path")
     .attr("d", "M0,-5L10,0L0,5") //箭頭的路徑
     .attr("fill", "#000000"); //箭頭顏色
-  links.value = g
+  links.value = g.value
     .append("g")
     .selectAll("path")
     .data(edges.value)
@@ -533,7 +520,7 @@ function drawChart() {
         console.log("i");
       });
     }); //根據箭頭標記的id標記箭頭
-  lineText.value = g
+  lineText.value = g.value
     .append("g")
     .selectAll("text")
     .data(edges.value)
@@ -544,7 +531,7 @@ function drawChart() {
     .style("font-size", 14)
     .attr("fill-opacity", 0);
   //創建分組
-  gs.value = g
+  gs.value = g.value
     .append("g")
     .selectAll(".circleText")
     .data(nodesDataList.value)
@@ -591,17 +578,8 @@ function drawChart() {
   svg.value.on(
     "click",
     function () {
-      console.log("123");
-
       nodesDataList.value.forEach((d: any) => (d.clickFlag = false));
-      // const event = d3.event;
-      // const target = event.srcElement; // 獲取事件發生源
-      // const data = d3.select(target).datum(); // 獲取事件發生源的數據
       removeSingle();
-      // d3.select(".singleCircle").remove();
-      // if (!data) {
-      //   document.getElementById("xxx").innerText = "";
-      // }
     },
     true
   );
@@ -627,20 +605,42 @@ function drawChart() {
     .attr("x", function ({ name }: any) {
       return textBreaking(d3.select(this), name);
     });
-  // gs.value.append("title").text((node: any) => {
-  //   return node.name;
-  // });
 }
 onMounted(() => {
+  svg.value = d3.select("svg");
   drawChart();
-  // watchEffect(() => drawChart());
+  // 滑鼠滾輪控制放大縮小
+  svg.value.call(
+    d3.zoom().on("zoom", function (d, i) {
+      g.value.attr("transform", d.transform);
+    })
+  );
+  const zoomT = d3.zoom().on("zoom", (d) => g.value.attr("transform", d.transform));
+  svg.value.call(zoomT);
+  // 按鈕控制svg 放大 縮小
+  d3.select("#zoom-in").on("click", (d, i) => {
+    svg.value.transition().call(zoomT.scaleBy, 1.2);
+  });
+  d3.select("#zoom-out").on("click", (d, i) => {
+    svg.value.transition().call(zoomT.scaleBy, 0.8);
+  });
 });
 </script>
 
 <template>
   <div>
     <h3>{{ title }}</h3>
-    <svg class="draw" width="960" height="500"></svg>
+    <svg
+      class="draw"
+      width="960"
+      height="500"
+      viewBox="0 0 960 500"
+      preserveAspectRatio="xMinYMin"
+    ></svg>
+  </div>
+  <div>
+    <button id="zoom-in" class="mx-5">放大</button>
+    <button id="zoom-out">縮小</button>
   </div>
 </template>
 <style>
@@ -649,7 +649,7 @@ onMounted(() => {
   stroke-width: 3;
 }
 .draw {
-  width: 100%;
+  width: 80%;
   height: 600px;
   border: solid 1px blue;
 }
