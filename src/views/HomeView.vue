@@ -485,14 +485,14 @@ function drawChart() {
   mark.value = g.value
     .append("g")
     .attr("class", "showLine")
-    .append("mark")
+    .append("marker")
     .attr("id", "resolved")
     .attr("markerUnits", "strokeWidth") //設置 strokeWidth 箭頭會隨著線的粗細變化
     .attr("markerUnits", "userSpaceOnUse")
     .attr("viewBox", "0 -5 10 10") //座標系的區域
     .attr("refX", 44) //箭頭座標
     .attr("refY", 0)
-    .attr("markerWidth", 10) //箭頭大小
+    .attr("markerWidth", 20) //箭頭大小
     .attr("markerHeight", 10)
     .attr("orient", "auto") //繪製方向，可設定為：auto(自動確認方向)和 角度值
     .attr("stroke-width", 2)
@@ -505,7 +505,7 @@ function drawChart() {
     .data(edges.value)
     .enter()
     .append("path")
-    .attr("d", (link) => genLinkPath(link)) //遍歷所有數據。d表示當前遍歷到的數據，返回繪製的貝爾賽曲線
+    .attr("d", (link: any) => genLinkPath(link)) //遍歷所有數據。d表示當前遍歷到的數據，返回繪製的貝爾賽曲線
     .attr("id", (d: any, i: number) => {
       //設置id，用於連線文字
       return "edgepath" + d.id;
