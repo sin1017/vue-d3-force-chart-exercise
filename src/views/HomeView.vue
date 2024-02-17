@@ -212,11 +212,7 @@ function toggleCircle(current: any, d: any) {
     data[i].Percentage = ((data[i].population / sum) * 100).toFixed(0) + "%";
   }
   const width = 300,
-    height = 300,
-    margin = { left: 30, top: 30, right: 30, bottom: 30 };
-  // svg_width = width + margin.left + margin.right,
-  // svg_height = height + margin.top + margin.bottom,
-  // font_size = 15;
+    height = 300;
   const g = current
     .append("g")
     .attr("class", "singleCircle")
@@ -229,7 +225,6 @@ function toggleCircle(current: any, d: any) {
     .innerRadius(width / 6.5)
     .outerRadius(width / 4);
   const angle_data = d3.pie().value(function (d) {
-    // console.log();
     return d.population;
   });
   const pieData = angle_data(data);
@@ -380,7 +375,7 @@ function ended(event: any, d: any) {
   d.fy = null;
 }
 /**
- * @description 處理節點文字換行
+ * @description 節點寫入文字、換行處理
  */
 function textBreaking(d3text: any, text: string) {
   const len = text.length;
@@ -428,13 +423,13 @@ function textBreaking(d3text: any, text: string) {
  * @description ticked
  */
 function ticked() {
-  // 连线路径
+  // 節點間的連線，定位
   links.value
     .attr("d", (link: any) => genLinkPath(link))
     .on("click", function () {
       console.log("tick");
     });
-  // 连线文字位置
+  // 線上hover 文字顯示位置
   lineText.value
     .attr("x", function (d: any) {
       return (d.source.x + d.target.x) / 2;
@@ -505,7 +500,7 @@ function drawChart() {
     .data(edges.value)
     .enter()
     .append("path")
-    .attr("d", (link: any) => genLinkPath(link)) //遍歷所有數據。d表示當前遍歷到的數據，返回繪製的貝爾賽曲線
+    .attr("d", (link: any) => genLinkPath(link)) //遍歷所有數據。d表示當前遍歷到的數據，返回繪製的貝爾賽曲線(把節點和節點中間話上線)
     .attr("id", (d: any, i: number) => {
       //設置id，用於連線文字
       return "edgepath" + d.id;
@@ -563,8 +558,6 @@ function drawChart() {
     .on(
       "click",
       function (d: any, i: number) {
-        console.log("555");
-
         lineText.value.style("fill-opacity", (edge: any) => {
           if (edge.source === i) {
             return 1;
